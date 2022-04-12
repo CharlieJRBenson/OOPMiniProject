@@ -126,7 +126,7 @@ public class MainPanel extends JPanel {
         add(createFundBtn);
         add(deleteBtn);
 
-        // set component bounds (only needed by Absolute Positioning)
+        // set component bounds
         buyBtn.setBounds(10, 435, 100, 25);
         portfolioLst.setBounds(395, 110, 160, 455);
         historyLst.setBounds(565, 110, 275, 455);
