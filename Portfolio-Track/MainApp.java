@@ -1,4 +1,7 @@
 import javax.swing.JFrame;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,13 +22,13 @@ public class MainApp {
         // sets up all button event listeners
         addAllBtnListeners(app);
 
-        // packs and makes visible
+        // packs and sets as visible
         frame.pack();
         frame.setVisible(true);
 
     }
 
-    public static void buyAsset(MainPanel app, boolean isFund) {
+    public static void buyAsset(MainPanel app) {
         float total = Float.parseFloat(app.amountTf.getText());
         String name = app.shareTf.getText();
         Account acc = getSelected(app);
@@ -37,7 +40,7 @@ public class MainApp {
             // THROW PROMPT BOUGHT SHARE
         } else {
             Account fu = getAccByName(app, name);
-            if (isFund && fu != null) {
+            if (fu != null) {
                 // check if buying fund and if fund exists
                 acc.buy((Asset) fu, total);
                 // THOW PROMPT BOUGHT FUND
@@ -66,6 +69,8 @@ public class MainApp {
         } else {
             // THROW PROMPT ASSET NOT OWNED
         }
+
+        refreshSelectedInfo(app);
 
     }
 
@@ -176,6 +181,7 @@ public class MainApp {
             return;
         }
 
+        // refreshes portfolio lists and values etc
         refreshPortfolio(app);
 
         app.accTypeLbl.setText("Account Type: " + acc);
@@ -193,8 +199,11 @@ public class MainApp {
 
         // refreshes new portfolio list
         for (Asset ass : acc.assets) {
-            app.portfolioModel.addElement(ass.getName());
+            app.portfolioModel.addElement(ass.getName() + "--$" + ass.getTotal());
         }
+
+        app.portfolioLbl.setText("Portfolio Worth: $" + acc.getWorth());
+
     }
 
     public static void fileReadWrite(MainPanel app, boolean importing) {
@@ -221,10 +230,13 @@ public class MainApp {
                     addAccount(app, a);
                 }
 
+                accIn.close();
+
                 // THROW PROMPT ADDED ACCOUNT
 
             } catch (Exception e) {
                 // THROWS PROMPT ERROR e
+                System.out.println(e);
             }
 
         } else {
@@ -238,12 +250,28 @@ public class MainApp {
                 // writing account to file
                 accOut.writeObject(acc);
 
+                accOut.close();
+
                 // THROW PROMPT SAVED ACCOUNT
 
             } catch (Exception e) {
                 // THROWS PROMPT ERROR e
             }
         }
+    }
+
+    public static void displayShare(MainPanel app) {
+        Account acc = getSelected(app);
+        String name = app.portfolioLst.getSelectedValue();
+        name = name.substring(0, name.indexOf("--"));
+        Asset ass = acc.getAssetByName(name);
+
+        if (ass == null) {
+            return;
+        }
+
+        app.selectedLbl.setText("Selected: " + ass.getName());
+        
     }
 
     public static void addAllBtnListeners(MainPanel app) {
@@ -303,16 +331,7 @@ public class MainApp {
         app.addBtnListener(app.buyShareBtn, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                buyAsset(app, false);
-
-            }
-        });
-
-        // buy fund button
-        app.addBtnListener(app.buyFundBtn, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buyAsset(app, true);
+                buyAsset(app);
 
             }
         });
@@ -321,7 +340,7 @@ public class MainApp {
         app.addBtnListener(app.sellBtn, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fileReadWrite(app, true);
+                sellAsset(app);
 
             }
         });
@@ -340,6 +359,15 @@ public class MainApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 withdraw(app);
+            }
+        });
+
+        // new share selected
+        app.portfolioLst.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                displayShare(app);
             }
         });
 

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Account implements Serializable {
     private String name;
     private float balance = 0;
+
     protected ArrayList<Asset> assets = new ArrayList<>();
 
     // constructor
@@ -49,14 +50,14 @@ public class Account implements Serializable {
         if (!assets.contains(ass)) {
             return false;
         } else if (ass.getTotal() <= total) {
-            // if assetsquantity is less than or equal to quant
-            // remove the asset and credit the total sold
-            this.remove(ass);
+            // if assets quantity is less than or equal to quant
             // getTotal = getQuantity*getPrice
             this.balance += ass.getTotal();
+            // remove the asset and credit the total sold
+            this.remove(ass);
         } else {
             ass.sell(quant);
-            this.balance += quant;
+            this.balance += total;
         }
         return true;
     }
@@ -74,6 +75,14 @@ public class Account implements Serializable {
     // returns accounts assets
     public List<Asset> getAssets() {
         return this.assets;
+    }
+
+    public float getWorth() {
+        float worth = 0;
+        for (Asset ass : this.assets) {
+            worth += ass.getTotal();
+        }
+        return worth;
     }
 
     public Asset getAssetByName(String name) {

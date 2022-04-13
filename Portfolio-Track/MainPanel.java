@@ -41,7 +41,6 @@ public class MainPanel extends JPanel {
     public JButton deleteBtn;
     public JScrollPane portScrollPan;
     public JScrollPane portHistPan;
-    public JButton buyFundBtn;
 
     // account lists for account menu
     public ArrayList<Account> accList = new ArrayList<>();
@@ -67,7 +66,7 @@ public class MainPanel extends JPanel {
         this.portfolioLst = new JList<>(portfolioModel);
         this.historyLst = new JList();
 
-        this.buyShareBtn = new JButton("Buy Share");
+        this.buyShareBtn = new JButton("Buy");
         this.portScrollPan = new JScrollPane(portfolioLst);
         this.portHistPan = new JScrollPane(historyLst);
         this.sellBtn = new JButton("Sell");
@@ -80,10 +79,10 @@ public class MainPanel extends JPanel {
         this.shareTf = new JTextField(5);
         this.buyLbl = new JLabel("Asset Name:");
         this.sellLbl = new JLabel("Amount $ :");
-        this.portfolioLbl = new JLabel("Portfolio Worth: $500");
-        this.selectedLbl = new JLabel("Selected: TSLA");
+        this.portfolioLbl = new JLabel("Portfolio Worth: $");
+        this.selectedLbl = new JLabel("Selected: ");
         this.schemaLbl = new JLabel("Date        Open        Close");
-        this.currPriceLbl = new JLabel("$/Share: $500");
+        this.currPriceLbl = new JLabel("$/Share: $");
         this.portshareLbl = new JLabel("Portfolio Shares");
         this.accountLbl = new JLabel("Account");
         this.accTypeLbl = new JLabel("Account Type: ");
@@ -97,7 +96,6 @@ public class MainPanel extends JPanel {
         this.createUserBtn = new JButton("New User");
         this.createFundBtn = new JButton("New Fund");
         this.deleteBtn = new JButton("Delete");
-        this.buyFundBtn = new JButton("Buy Fund");
 
         // adjust size and set layout
         setPreferredSize(new Dimension(845, 575));
@@ -137,13 +135,12 @@ public class MainPanel extends JPanel {
         add(createUserBtn);
         add(createFundBtn);
         add(deleteBtn);
-        add(buyFundBtn);
 
         // set component bounds
         buyShareBtn.setBounds(10, 435, 100, 25);
         portfolioLst.setBounds(395, 110, 160, 455);
         historyLst.setBounds(565, 110, 275, 455);
-        sellBtn.setBounds(230, 435, 100, 25);
+        sellBtn.setBounds(120, 435, 100, 25);
         depositTf.setBounds(10, 505, 100, 25);
         balanceLbl.setBounds(10, 540, 320, 25);
         withdrawBtn.setBounds(230, 505, 100, 25);
@@ -171,7 +168,6 @@ public class MainPanel extends JPanel {
         createUserBtn.setBounds(10, 105, 100, 25);
         createFundBtn.setBounds(120, 105, 100, 25);
         deleteBtn.setBounds(230, 10, 100, 25);
-        buyFundBtn.setBounds(120, 435, 100, 25);
 
     }
 

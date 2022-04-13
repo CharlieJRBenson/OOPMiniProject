@@ -1,3 +1,4 @@
+
 public interface Asset {
     public String getName();
 

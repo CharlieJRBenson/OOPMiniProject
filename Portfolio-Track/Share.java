@@ -3,8 +3,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.io.Serializable;
 
-public class Share implements Asset {
+public class Share implements Asset, Serializable {
     private float price = 100;
     private float quantity = 0;
     private String name;
