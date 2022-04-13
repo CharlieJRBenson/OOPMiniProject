@@ -132,9 +132,15 @@ public class MainApp {
         // get account currently selected by menu
         Account acc = getSelected(app);
 
+        if (app.accModel.getSize() <= 1) {
+            return;
+        }
+
         // remove this from accounts arraylist & menu drop down
         app.accModel.removeElement(acc.getName());
         app.accList.remove(acc);
+
+        refreshSelectedInfo(app);
 
     }
 
@@ -220,19 +226,12 @@ public class MainApp {
                 Account exist = getAccByName(app, a.getName());
 
                 // if account exists - update that account
-                if (exist != null) {
-                    // THROW PROMPT ARE YOU SURE
-
-                    exist = a;
-                    addAccount(app, exist);
-
-                } else {
+                if (exist == null) {
                     addAccount(app, a);
+                    // THROW PROMPT ADDED ACCOUNT
                 }
 
                 accIn.close();
-
-                // THROW PROMPT ADDED ACCOUNT
 
             } catch (Exception e) {
                 // THROWS PROMPT ERROR e
@@ -271,7 +270,7 @@ public class MainApp {
         }
 
         app.selectedLbl.setText("Selected: " + ass.getName());
-        
+
     }
 
     public static void addAllBtnListeners(MainPanel app) {
