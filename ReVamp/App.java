@@ -12,7 +12,7 @@ public class App {
 
         buyShare(fundsmith, "TSLA", 250);
         buyShare(fundsmith, "APPL", 200);
-        buyFund(charlie, fundsmith, 30);
+        buyShare(charlie, "FundSmith", 30);
 
         System.out.println("Fundsmiths assets " + fundsmith.getAssets().toString());
         System.out.println("Charlie assets " + charlie.getAssets().toString());

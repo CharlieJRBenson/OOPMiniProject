@@ -1,81 +1,92 @@
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.awt.event.*;
+
 import javax.swing.*;
-import javax.swing.event.*;
 
 public class MainPanel extends JPanel {
-    private JButton buyBtn;
-    private JList portfolioLst;
-    private JList historyLst;
-    private JButton sellBtn;
-    private JTextField depositTf;
-    private JLabel balanceLbl;
-    private JButton withdrawBtn;
-    private JButton depositBtn;
-    private JTextField amountTf;
-    private JLabel balInstrucLbl;
-    private JTextField shareTf;
-    private JLabel buyLbl;
-    private JLabel sellLbl;
-    private JLabel portfolioLbl;
-    private JLabel selectedLbl;
-    private JLabel schemaLbl;
-    private JLabel currPriceLbl;
-    private JLabel portshareLbl;
-    private JComboBox accountsMenu;
-    private JLabel accountLbl;
-    private JLabel accTypeLbl;
-    private JLabel createAccLbl;
-    private JTextField userNameTf;
-    private JLabel importLbl;
-    private JTextField pathTf;
-    private JButton saveBtn;
-    private JButton importBtn;
-    private JLabel instrucImportLbl;
-    private JButton createUserBtn;
-    private JButton createFundBtn;
-    private JButton deleteBtn;
-    private JScrollPane portScrollPan;
-    private JScrollPane portHistPan;
+
+    // class variables made public to enable more readable code.
+    // avoids the need to add 15 getter/setter pairs and 1000 lines class.
+
+    public JButton buyShareBtn;
+    public JList historyLst;
+    public JButton sellBtn;
+    public JTextField depositTf;
+    public JLabel balanceLbl;
+    public JButton withdrawBtn;
+    public JButton depositBtn;
+    public JTextField amountTf;
+    public JLabel balInstrucLbl;
+    public JTextField shareTf;
+    public JLabel buyLbl;
+    public JLabel sellLbl;
+    public JLabel portfolioLbl;
+    public JLabel selectedLbl;
+    public JLabel schemaLbl;
+    public JLabel currPriceLbl;
+    public JLabel portshareLbl;
+    public JLabel accountLbl;
+    public JLabel accTypeLbl;
+    public JLabel createAccLbl;
+    public JTextField userNameTf;
+    public JLabel importLbl;
+    public JTextField pathTf;
+    public JButton saveBtn;
+    public JButton importBtn;
+    public JLabel instrucImportLbl;
+    public JButton createUserBtn;
+    public JButton createFundBtn;
+    public JButton deleteBtn;
+    public JScrollPane portScrollPan;
+    public JScrollPane portHistPan;
+    public JButton buyFundBtn;
+
+    // account lists for account menu
+    public ArrayList<Account> accList = new ArrayList<>();
+    public DefaultComboBoxModel<String> accModel;
+    public JComboBox<String> accountsMenu;
+
+    // protfolio list models
+    public DefaultListModel<String> portfolioModel;
+    public JList<String> portfolioLst;
+
+    // adds event listener to btn
+    public void addBtnListener(AbstractButton btn, ActionListener listener) {
+        btn.addActionListener(listener);
+    }
 
     public MainPanel() {
         // construct preComponents
-        String[] portfolioLstItems = { "a", "b", "c", "a", "b", "c", "a", "b", "c", "a", "b", "c", "a", "b", "c", "a",
-                "b", "c", "a", "b", "c", "a", "b", "c", "a", "b", "c", "a", "b", "c", };
-        String[] historyLstItems = { "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,",
-                "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,",
-                "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,",
-                "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,",
-                "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,",
-                "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", "1/1/1, 50, 40,", };
-        String[] accountsMenuItems = { "Charlie", "David", "FundSmith" };
+        this.accModel = new DefaultComboBoxModel<>();
+        this.portfolioModel = new DefaultListModel<>();
 
         // construct components
-        this.buyBtn = new JButton("Buy");
-        this.portfolioLst = new JList(portfolioLstItems);
-        this.historyLst = new JList(historyLstItems);
+        this.accountsMenu = new JComboBox<>(accModel);
+        this.portfolioLst = new JList<>(portfolioModel);
+        this.historyLst = new JList();
+
+        this.buyShareBtn = new JButton("Buy Share");
         this.portScrollPan = new JScrollPane(portfolioLst);
         this.portHistPan = new JScrollPane(historyLst);
-
         this.sellBtn = new JButton("Sell");
         this.depositTf = new JTextField(5);
-        this.balanceLbl = new JLabel("Balance: $500");
+        this.balanceLbl = new JLabel("Balance: $0");
         this.withdrawBtn = new JButton("Withdraw");
         this.depositBtn = new JButton("Deposit");
         this.amountTf = new JTextField(5);
         this.balInstrucLbl = new JLabel("Deposit or Withdraw Cash:");
         this.shareTf = new JTextField(5);
-        this.buyLbl = new JLabel("Share:");
+        this.buyLbl = new JLabel("Asset Name:");
         this.sellLbl = new JLabel("Amount $ :");
         this.portfolioLbl = new JLabel("Portfolio Worth: $500");
         this.selectedLbl = new JLabel("Selected: TSLA");
         this.schemaLbl = new JLabel("Date        Open        Close");
-        this.currPriceLbl = new JLabel("Current Price: $500");
+        this.currPriceLbl = new JLabel("$/Share: $500");
         this.portshareLbl = new JLabel("Portfolio Shares");
-        this.accountsMenu = new JComboBox(accountsMenuItems);
         this.accountLbl = new JLabel("Account");
-        this.accTypeLbl = new JLabel("Account Type: User");
+        this.accTypeLbl = new JLabel("Account Type: ");
         this.createAccLbl = new JLabel("Create Account");
         this.userNameTf = new JTextField(5);
         this.importLbl = new JLabel("Account File Path :");
@@ -86,13 +97,14 @@ public class MainPanel extends JPanel {
         this.createUserBtn = new JButton("New User");
         this.createFundBtn = new JButton("New Fund");
         this.deleteBtn = new JButton("Delete");
+        this.buyFundBtn = new JButton("Buy Fund");
 
         // adjust size and set layout
-        setPreferredSize(new Dimension(845, 570));
+        setPreferredSize(new Dimension(845, 575));
         setLayout(null);
 
         // add components
-        add(buyBtn);
+        add(buyShareBtn);
         add(portfolioLst);
         add(historyLst);
         add(portScrollPan);
@@ -125,12 +137,13 @@ public class MainPanel extends JPanel {
         add(createUserBtn);
         add(createFundBtn);
         add(deleteBtn);
+        add(buyFundBtn);
 
         // set component bounds (only needed by Absolute Positioning)
-        buyBtn.setBounds(10, 435, 100, 25);
+        buyShareBtn.setBounds(10, 435, 100, 25);
         portfolioLst.setBounds(395, 110, 160, 455);
         historyLst.setBounds(565, 110, 275, 455);
-        sellBtn.setBounds(120, 435, 100, 25);
+        sellBtn.setBounds(230, 435, 100, 25);
         depositTf.setBounds(10, 505, 100, 25);
         balanceLbl.setBounds(10, 540, 320, 25);
         withdrawBtn.setBounds(230, 505, 100, 25);
@@ -158,6 +171,8 @@ public class MainPanel extends JPanel {
         createUserBtn.setBounds(10, 105, 100, 25);
         createFundBtn.setBounds(120, 105, 100, 25);
         deleteBtn.setBounds(230, 10, 100, 25);
+        buyFundBtn.setBounds(120, 435, 100, 25);
+
     }
 
 }

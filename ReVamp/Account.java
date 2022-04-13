@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
-public class Account {
+public class Account implements Serializable {
     private String name;
-    private int balance = 0;
+    private float balance = 0;
     protected ArrayList<Asset> assets = new ArrayList<>();
 
     // constructor
@@ -92,5 +93,5 @@ public class Account {
     // removes asset from assets
     private void remove(Asset ass) {
         assets.remove(ass);
-    }    
+    }
 }
