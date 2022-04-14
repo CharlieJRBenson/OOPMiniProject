@@ -1,6 +1,13 @@
+
 public class App {
     public static void main(String[] args) {
         setup();
+        jsonMethod();
+    }
+
+    public static Object jsonMethod() {
+
+        return null;
     }
 
     public static void setup() {

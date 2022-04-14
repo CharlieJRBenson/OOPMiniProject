@@ -1,0 +1,8 @@
+{
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "dependencies/flatlaf-2.1.jar",
+    "dependencies/jackson-core-2.13.2.jar",
+    "dependencies/jackson-databind-2.13.2.2.jar"
+  ]
+}

@@ -1,6 +1,9 @@
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com.formdev.flatlaf.FlatDarkLaf;
 
 import java.awt.event.*;
 import java.io.File;
@@ -12,6 +15,11 @@ import java.io.ObjectOutputStream;
 public class MainApp {
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
 
         // setup
         JFrame frame = new JFrame("Portfolio");
@@ -46,8 +54,10 @@ public class MainApp {
                 // THOW PROMPT BOUGHT FUND
             } else {
                 // creates new share
-                ass = new Share(name);
-                acc.buy(ass, total);
+                Share sh = new Share(name);
+                sh.getAPIResp();
+                acc.buy(sh, total);
+
                 // THROW PROMPT BOUGHT SHARE
             }
 
@@ -187,14 +197,14 @@ public class MainApp {
             return;
         }
 
-        // refreshes portfolio lists and values etc
-        refreshPortfolio(app);
-
         app.accTypeLbl.setText("Account Type: " + acc);
         app.balanceLbl.setText("Balance: $" + Float.toString(acc.getBal()));
         app.userNameTf.setText("");
         app.depositTf.setText("");
         app.pathTf.setText("");
+
+        // refreshes portfolio lists and values etc
+        refreshPortfolio(app);
 
     }
 
@@ -270,6 +280,7 @@ public class MainApp {
         }
 
         app.selectedLbl.setText("Selected: " + ass.getName());
+        app.currPriceLbl.setText("$/Share: $" + ass.getPrice());
 
     }
 
