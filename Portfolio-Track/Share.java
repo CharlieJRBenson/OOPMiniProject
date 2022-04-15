@@ -11,12 +11,14 @@ import java.net.http.HttpResponse;
 import java.io.Serializable;
 
 public class Share implements Asset, Serializable {
-    private float price = 100;
+    private float price;
     private float quantity = 0;
     private String name;
+    private final Random rand = new Random();
 
     public Share(String name) {
         this.name = name;
+        this.price = 100;
     }
 
     public void buy(float quant) {
@@ -51,6 +53,7 @@ public class Share implements Asset, Serializable {
         return getPrice() * getQuantity();
     }
 
+    @Override
     public String getAPIResp() {
         // calls api
         try {
@@ -61,14 +64,15 @@ public class Share implements Asset, Serializable {
         }
     }
 
+    @Override
     public void update() {
-        setPrice(this.price * getRand());
+        setPrice(this.price * getRand(this.rand));
     }
 
     // gets random percentage change
-    public static float getRand() {
+    public static float getRand(Random rand) {
         // gets random number of 0 - 2
-        Random rand = new Random();
+
         int sign = (rand.nextInt(2));
         // gets percentage change eg 50/1000 = 0.05
         float pcChange = (float) rand.nextInt(99) / 1000;

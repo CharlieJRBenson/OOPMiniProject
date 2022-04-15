@@ -98,9 +98,9 @@ public class MainPanel extends JPanel {
         this.sellLbl = new JLabel("Amount $ :");
         this.portfolioLbl = new JLabel("Portfolio Worth: $");
         this.selectedLbl = new JLabel("Selected: ");
-        this.schemaLbl = new JLabel("Date--Open--Close");
+        this.schemaLbl = new JLabel("Price History");
         this.currPriceLbl = new JLabel("$/Share: $");
-        this.portshareLbl = new JLabel("Shares--Value($)");
+        this.portshareLbl = new JLabel("Shares");
         this.accountLbl = new JLabel("Account");
         this.accTypeLbl = new JLabel("Account Type: ");
         this.createAccLbl = new JLabel("Create Account");

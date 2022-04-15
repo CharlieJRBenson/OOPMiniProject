@@ -48,6 +48,7 @@ public class Fund extends Account implements Asset {
         return ("No Historic Data for Fund Type");
     }
 
+    @Override
     public void update() {
         // calls to update its own shares
         for (Asset ass : assets) {

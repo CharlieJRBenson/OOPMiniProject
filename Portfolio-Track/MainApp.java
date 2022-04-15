@@ -58,7 +58,7 @@ public class MainApp {
 
         }
 
-        refreshSelectedInfo(app);
+        refreshAccountInfo(app);
     }
 
     public static void sellAsset(MainPanel app) {
@@ -75,7 +75,7 @@ public class MainApp {
             // THROW PROMPT ASSET NOT OWNED
         }
 
-        refreshSelectedInfo(app);
+        refreshAccountInfo(app);
 
     }
 
@@ -145,7 +145,7 @@ public class MainApp {
         app.accModel.removeElement(acc.getName());
         app.accList.remove(acc);
 
-        refreshSelectedInfo(app);
+        refreshAccountInfo(app);
 
     }
 
@@ -183,7 +183,7 @@ public class MainApp {
 
     }
 
-    public static void refreshSelectedInfo(MainPanel app) {
+    public static void refreshAccountInfo(MainPanel app) {
         // get account currently selected by menu
         Account acc = getSelected(app);
 
@@ -197,23 +197,10 @@ public class MainApp {
         app.userNameTf.setText("");
         app.depositTf.setText("");
         app.pathTf.setText("");
+        app.historyTA.setText("");
 
         // refreshes portfolio lists and values etc
-        refreshPortfolio(app);
-
-    }
-
-    public static void refreshPortfolio(MainPanel app) {
-        Account acc = getSelected(app);
-        // clears old portfolio
-        app.portfolioModel.removeAllElements();
-
-        // refreshes new portfolio list
-        for (Asset ass : acc.assets) {
-            app.portfolioModel.addElement(ass.getName() + "--$" + ass.getTotal());
-        }
-
-        app.portfolioLbl.setText("Portfolio Worth: $" + acc.getWorth());
+        refreshPortfolio(app, acc);
 
     }
 
@@ -264,10 +251,11 @@ public class MainApp {
         }
     }
 
+    // called when share is selected from list
     public static void displayShare(MainPanel app) {
         Account acc = getSelected(app);
         String name = app.portfolioLst.getSelectedValue();
-        name = name.substring(0, name.indexOf("--"));
+        name = name.substring(0, name.indexOf('-'));
 
         Asset ass = acc.getAssetByName(name);
         if (ass == null) {
@@ -281,15 +269,32 @@ public class MainApp {
         if (app.apiTgl.isSelected()) {
             app.historyTA.setText(ass.getAPIResp());
         } else {
+            updateAllPrices(app);
             printHistory(app, ass);
         }
+
+        app.portfolioLbl.setText("Portfolio Worth: $" + acc.getWorth());
 
     }
 
     public static void printHistory(MainPanel app, Asset ass) {
-        for (Pair pair : app.priceHistMap.get(ass)) {
-            app.historyTA.append("\nDate-" + pair.getFirst() + "  Price" + pair.getSecond());
+        app.historyTA.setText("");
+        for (Pair<Date, Float> pair : app.priceHistMap.get(ass)) {
+            app.historyTA.append("\n" + pair.getFirst() + "      $" + pair.getSecond());
         }
+    }
+
+    public static void refreshPortfolio(MainPanel app, Account acc) {
+
+        // clears old portfolio
+        app.portfolioModel.removeAllElements();
+
+        // refreshes new portfolio list
+        for (Asset ass : acc.assets) {
+            // prints share data
+            app.portfolioModel.addElement(ass.getName() + "--" + ass.getQuantity() + "shares");
+        }
+        app.portfolioLbl.setText("Portfolio Worth: $" + acc.getWorth());
     }
 
     public static void updateAllPrices(MainPanel app) {
@@ -305,14 +310,17 @@ public class MainApp {
             // iterate each asset in acocunt
             for (int i = 0; i < app.portfolioModel.size(); i++) {
                 String name = app.portfolioModel.getElementAt(i);
+                name = name.substring(0, name.indexOf("--"));
 
                 Asset ass = acc.getAssetByName(name);
                 if (ass == null) {
                     continue;
                 }
                 // gets current arraylist of price data
-                ArrayList<Pair<Date, Float>> prices;
-                prices = app.priceHistMap.get(ass);
+                ArrayList<Pair<Date, Float>> prices = app.priceHistMap.get(ass);
+                if (prices == null) {
+                    prices = new ArrayList<>();
+                }
 
                 // append to start of price data array
                 prices.add(0, new Pair<>(time, ass.getPrice())); // new instance of pair class generic types
@@ -322,7 +330,6 @@ public class MainApp {
 
                 // create new prices
                 newPrices(acc);
-
             }
         } catch (NullPointerException e) {
             // THROW PROMPT NO ACCOUNT
@@ -330,7 +337,6 @@ public class MainApp {
         } catch (Exception e) {
             System.out.println(e);
         }
-
     }
 
     // create new prices method
@@ -371,7 +377,7 @@ public class MainApp {
         app.accountsMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refreshSelectedInfo(app);
+                refreshAccountInfo(app);
             }
         });
 
