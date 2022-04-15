@@ -1,9 +1,10 @@
-
 import java.awt.*;
-import java.util.ArrayList;
 import java.awt.event.*;
-
+import java.util.ArrayList;
 import javax.swing.*;
+import java.util.Map;
+import java.util.Date;
+import java.util.HashMap;
 
 public class MainPanel extends JPanel {
 
@@ -11,7 +12,6 @@ public class MainPanel extends JPanel {
     // avoids the need to add 15 getter/setter pairs and 1000 lines class.
 
     public JButton buyShareBtn;
-    public JList historyLst;
     public JButton sellBtn;
     public JTextField depositTf;
     public JLabel balanceLbl;
@@ -39,8 +39,7 @@ public class MainPanel extends JPanel {
     public JButton createUserBtn;
     public JButton createFundBtn;
     public JButton deleteBtn;
-    public JScrollPane portScrollPan;
-    public JScrollPane portHistPan;
+    public JToggleButton apiTgl;
 
     // account lists for account menu
     public ArrayList<Account> accList = new ArrayList<>();
@@ -51,6 +50,12 @@ public class MainPanel extends JPanel {
     public DefaultListModel<String> portfolioModel;
     public JList<String> portfolioLst;
 
+    // historic prices
+    public JTextArea historyTA;
+
+    // prices history, key = Asset, val = List of entrys
+    public Map<Asset, ArrayList<Pair<Date, Float>>> priceHistMap;
+
     // adds event listener to btn
     public void addBtnListener(AbstractButton btn, ActionListener listener) {
         btn.addActionListener(listener);
@@ -60,15 +65,27 @@ public class MainPanel extends JPanel {
         // construct preComponents
         this.accModel = new DefaultComboBoxModel<>();
         this.portfolioModel = new DefaultListModel<>();
+        this.priceHistMap = new HashMap<>();
 
         // construct components
         this.accountsMenu = new JComboBox<>(accModel);
         this.portfolioLst = new JList<>(portfolioModel);
-        this.historyLst = new JList();
+
+        // creates text area
+        this.historyTA = new JTextArea(5, 5);
+        this.historyTA.setLineWrap(true);
+        this.historyTA.setWrapStyleWord(true);
+        this.historyTA.setEditable(false);
+
+        JScrollPane portfScroll = new JScrollPane(this.portfolioLst);
+        JScrollPane histScroll = new JScrollPane(this.historyTA);
+
+        histScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        portfScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        histScroll.setVisible(true);
+        portfScroll.setVisible(true);
 
         this.buyShareBtn = new JButton("Buy");
-        this.portScrollPan = new JScrollPane(portfolioLst);
-        this.portHistPan = new JScrollPane(historyLst);
         this.sellBtn = new JButton("Sell");
         this.depositTf = new JTextField(5);
         this.balanceLbl = new JLabel("Balance: $0");
@@ -96,79 +113,82 @@ public class MainPanel extends JPanel {
         this.createUserBtn = new JButton("New User");
         this.createFundBtn = new JButton("New Fund");
         this.deleteBtn = new JButton("Delete");
+        this.apiTgl = new JToggleButton("Real Data", false);
 
         // adjust size and set layout
-        setPreferredSize(new Dimension(845, 575));
-        setLayout(null);
+        this.setPreferredSize(new Dimension(845, 575));
+        this.setLayout(null);
 
         // add components
-        add(buyShareBtn);
-        add(portfolioLst);
-        add(historyLst);
-        add(portScrollPan);
-        add(portHistPan);
-        add(sellBtn);
-        add(depositTf);
-        add(balanceLbl);
-        add(withdrawBtn);
-        add(depositBtn);
-        add(amountTf);
-        add(balInstrucLbl);
-        add(shareTf);
-        add(buyLbl);
-        add(sellLbl);
-        add(portfolioLbl);
-        add(selectedLbl);
-        add(schemaLbl);
-        add(currPriceLbl);
-        add(portshareLbl);
-        add(accountsMenu);
-        add(accountLbl);
-        add(accTypeLbl);
-        add(createAccLbl);
-        add(userNameTf);
-        add(importLbl);
-        add(pathTf);
-        add(saveBtn);
-        add(importBtn);
-        add(instrucImportLbl);
-        add(createUserBtn);
-        add(createFundBtn);
-        add(deleteBtn);
+        this.add(buyShareBtn);
+
+        this.add(portfScroll);
+        this.add(histScroll);
+        this.add(portfolioLst);
+        this.add(historyTA);
+        this.add(sellBtn);
+        this.add(depositTf);
+        this.add(balanceLbl);
+        this.add(withdrawBtn);
+        this.add(depositBtn);
+        this.add(amountTf);
+        this.add(balInstrucLbl);
+        this.add(shareTf);
+        this.add(buyLbl);
+        this.add(sellLbl);
+        this.add(portfolioLbl);
+        this.add(selectedLbl);
+        this.add(schemaLbl);
+        this.add(currPriceLbl);
+        this.add(portshareLbl);
+        this.add(accountsMenu);
+        this.add(accountLbl);
+        this.add(accTypeLbl);
+        this.add(createAccLbl);
+        this.add(userNameTf);
+        this.add(importLbl);
+        this.add(pathTf);
+        this.add(saveBtn);
+        this.add(importBtn);
+        this.add(instrucImportLbl);
+        this.add(createUserBtn);
+        this.add(createFundBtn);
+        this.add(deleteBtn);
+        this.add(apiTgl);
 
         // set component bounds
-        buyShareBtn.setBounds(10, 435, 100, 25);
-        portfolioLst.setBounds(395, 110, 160, 455);
-        historyLst.setBounds(565, 110, 275, 455);
-        sellBtn.setBounds(120, 435, 100, 25);
-        depositTf.setBounds(10, 505, 100, 25);
-        balanceLbl.setBounds(10, 540, 320, 25);
-        withdrawBtn.setBounds(230, 505, 100, 25);
-        depositBtn.setBounds(120, 505, 100, 25);
-        amountTf.setBounds(120, 400, 100, 25);
-        balInstrucLbl.setBounds(10, 480, 160, 25);
-        shareTf.setBounds(10, 400, 100, 25);
-        buyLbl.setBounds(10, 375, 100, 25);
-        sellLbl.setBounds(120, 375, 100, 25);
-        portfolioLbl.setBounds(565, 10, 160, 25);
-        selectedLbl.setBounds(565, 40, 160, 25);
-        schemaLbl.setBounds(565, 85, 145, 25);
-        currPriceLbl.setBounds(565, 60, 165, 25);
-        portshareLbl.setBounds(395, 85, 100, 25);
-        accountsMenu.setBounds(65, 10, 155, 25);
-        accountLbl.setBounds(10, 10, 55, 25);
-        accTypeLbl.setBounds(10, 35, 155, 25);
-        createAccLbl.setBounds(10, 75, 100, 25);
-        userNameTf.setBounds(120, 75, 100, 25);
-        importLbl.setBounds(10, 180, 125, 25);
-        pathTf.setBounds(10, 200, 210, 25);
-        saveBtn.setBounds(10, 235, 100, 25);
-        importBtn.setBounds(120, 235, 100, 25);
-        instrucImportLbl.setBounds(10, 155, 240, 25);
-        createUserBtn.setBounds(10, 105, 100, 25);
-        createFundBtn.setBounds(120, 105, 100, 25);
-        deleteBtn.setBounds(230, 10, 100, 25);
-
+        this.buyShareBtn.setBounds(10, 435, 100, 25);
+        this.portfolioLst.setBounds(395, 110, 160, 455);
+        this.historyTA.setBounds(565, 110, 275, 455);
+        this.sellBtn.setBounds(120, 435, 100, 25);
+        this.depositTf.setBounds(10, 505, 100, 25);
+        this.balanceLbl.setBounds(10, 540, 320, 25);
+        this.withdrawBtn.setBounds(230, 505, 100, 25);
+        this.depositBtn.setBounds(120, 505, 100, 25);
+        this.amountTf.setBounds(120, 400, 100, 25);
+        this.balInstrucLbl.setBounds(10, 480, 160, 25);
+        this.shareTf.setBounds(10, 400, 100, 25);
+        this.buyLbl.setBounds(10, 375, 100, 25);
+        this.sellLbl.setBounds(120, 375, 100, 25);
+        this.portfolioLbl.setBounds(565, 10, 160, 25);
+        this.selectedLbl.setBounds(565, 40, 160, 25);
+        this.schemaLbl.setBounds(565, 85, 145, 25);
+        this.currPriceLbl.setBounds(565, 60, 165, 25);
+        this.portshareLbl.setBounds(395, 85, 100, 25);
+        this.accountsMenu.setBounds(65, 10, 155, 25);
+        this.accountLbl.setBounds(10, 10, 55, 25);
+        this.accTypeLbl.setBounds(10, 35, 155, 25);
+        this.createAccLbl.setBounds(10, 75, 100, 25);
+        this.userNameTf.setBounds(120, 75, 100, 25);
+        this.importLbl.setBounds(10, 180, 125, 25);
+        this.pathTf.setBounds(10, 200, 210, 25);
+        this.saveBtn.setBounds(10, 235, 100, 25);
+        this.importBtn.setBounds(120, 235, 100, 25);
+        this.instrucImportLbl.setBounds(10, 155, 240, 25);
+        this.createUserBtn.setBounds(10, 105, 100, 25);
+        this.createFundBtn.setBounds(120, 105, 100, 25);
+        this.deleteBtn.setBounds(230, 10, 100, 25);
+        apiTgl.setBounds(740, 80, 100, 25);
     }
 
 }

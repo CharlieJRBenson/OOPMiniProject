@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.Random;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -34,8 +34,11 @@ public class Share implements Asset, Serializable {
 
     @Override
     public float getPrice() {
-
         return this.price;
+    }
+
+    public void setPrice(float val) {
+        this.price = val;
     }
 
     @Override
@@ -48,16 +51,33 @@ public class Share implements Asset, Serializable {
         return getPrice() * getQuantity();
     }
 
-    public boolean getAPIResp() {
-        // calls api and formats response
+    public String getAPIResp() {
+        // calls api
         try {
-            String resp = getDaily(this.name);
-            //// FORMAT DATA AND
-            // this.price = close
-            return true;
+            return getDaily(this.name);
         } catch (Exception e) {
-            System.out.println("Failed API Request");
-            return false;
+            System.out.println(e);
+            return ("Failed API Request");
+        }
+    }
+
+    public void update() {
+        setPrice(this.price * getRand());
+    }
+
+    // gets random percentage change
+    public static float getRand() {
+        // gets random number of 0 - 2
+        Random rand = new Random();
+        int sign = (rand.nextInt(2));
+        // gets percentage change eg 50/1000 = 0.05
+        float pcChange = (float) rand.nextInt(99) / 1000;
+
+        // if number is 1 then price goes down
+        if (sign == 0) {
+            return (1 - pcChange);
+        } else {
+            return (1 + pcChange);
         }
 
     }

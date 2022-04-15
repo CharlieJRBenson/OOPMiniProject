@@ -42,4 +42,19 @@ public class Fund extends Account implements Asset {
     public float getTotal() {
         return getPrice() * getQuantity();
     }
+
+    @Override
+    public String getAPIResp() {
+        return ("No Historic Data for Fund Type");
+    }
+
+    public void update() {
+        // calls to update its own shares
+        for (Asset ass : assets) {
+            if (ass != this) {
+                ass.update();
+            }
+
+        }
+    }
 }

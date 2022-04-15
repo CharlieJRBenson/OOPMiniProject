@@ -1,25 +1,20 @@
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import com.formdev.flatlaf.FlatDarkLaf;
-
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class MainApp {
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception ex) {
-            System.err.println("Failed to initialize LaF");
-        }
 
         // setup
         JFrame frame = new JFrame("Portfolio");
@@ -273,8 +268,8 @@ public class MainApp {
         Account acc = getSelected(app);
         String name = app.portfolioLst.getSelectedValue();
         name = name.substring(0, name.indexOf("--"));
-        Asset ass = acc.getAssetByName(name);
 
+        Asset ass = acc.getAssetByName(name);
         if (ass == null) {
             return;
         }
@@ -282,10 +277,71 @@ public class MainApp {
         app.selectedLbl.setText("Selected: " + ass.getName());
         app.currPriceLbl.setText("$/Share: $" + ass.getPrice());
 
+        // checks if "real data" toggle selected
+        if (app.apiTgl.isSelected()) {
+            app.historyTA.setText(ass.getAPIResp());
+        } else {
+            printHistory(app, ass);
+        }
+
     }
 
+    public static void printHistory(MainPanel app, Asset ass) {
+        for (Pair pair : app.priceHistMap.get(ass)) {
+            app.historyTA.append("\nDate-" + pair.getFirst() + "  Price" + pair.getSecond());
+        }
+    }
+
+    public static void updateAllPrices(MainPanel app) {
+
+        try {
+            // acc can be null
+            Account acc = getSelected(app);
+            // gets current time as Date type
+            Date time = Calendar.getInstance().getTime();
+
+            // write current price to history
+
+            // iterate each asset in acocunt
+            for (int i = 0; i < app.portfolioModel.size(); i++) {
+                String name = app.portfolioModel.getElementAt(i);
+
+                Asset ass = acc.getAssetByName(name);
+                if (ass == null) {
+                    continue;
+                }
+                // gets current arraylist of price data
+                ArrayList<Pair<Date, Float>> prices;
+                prices = app.priceHistMap.get(ass);
+
+                // append to start of price data array
+                prices.add(0, new Pair<>(time, ass.getPrice())); // new instance of pair class generic types
+
+                // updates price arraylist entry for asset
+                app.priceHistMap.put(ass, prices);
+
+                // create new prices
+                newPrices(acc);
+
+            }
+        } catch (NullPointerException e) {
+            // THROW PROMPT NO ACCOUNT
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
+    // create new prices method
+    public static void newPrices(Account acc) {
+        for (Asset ass : acc.assets) {
+            ass.update();
+        }
+    }
+
+    // FOLLOWING ARE ALL THE BUTTON LISTENERS CALLING RESPECTIVE METHOD
     public static void addAllBtnListeners(MainPanel app) {
-        // calling event listener setup methods
 
         // create user button
         app.addBtnListener(app.createUserBtn, new ActionListener() {
@@ -381,6 +437,13 @@ public class MainApp {
             }
         });
 
+        // toggle real data
+        app.addBtnListener(app.apiTgl, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayShare(app);
+            }
+        });
     }
 
 }

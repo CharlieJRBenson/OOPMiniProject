@@ -11,4 +11,8 @@ public interface Asset {
     public void buy(float quant);
 
     public void sell(float quant);
+
+    public String getAPIResp();
+
+    public void update();
 }
